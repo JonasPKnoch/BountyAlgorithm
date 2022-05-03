@@ -1,0 +1,58 @@
+package alg;
+
+import java.util.HashMap;
+
+public class TestClient {
+	static String charList = " #x";
+	
+	static String testGrid =
+			  "   #x#   "
+			+ "   #x#   "
+			+ "####x####"
+			+ "xxxxxxxxx"
+			+ "#########";
+
+	public static void main(String[] args) {
+		
+
+	}
+	
+	public static void DisplayArr(int[][] arr, HashMap<Character, Integer> map) {
+		StringBuilder sb = new StringBuilder();
+		
+		for(int i = 0; i < arr[0].length; i++) {
+			sb.setLength(0);
+			for(int j = 0; j < arr.length; j++) {
+				sb.append(map.get(arr[j][i]));
+			}
+			System.out.println(sb.toString());
+		}
+	}
+	
+	public static HashMap<Character, Integer> generateMap(String allChars) {
+		HashMap<Character, Integer> map = new HashMap<>();
+		
+		for(int i = 0; i < allChars.length(); i++) {
+			char c = allChars.charAt(i);
+			if(c != '\n')
+				map.put(c, map.size());
+		}
+		
+		return map;
+	}
+	
+	public static int[][] buildArray(String input, HashMap<Character, Integer> map) {
+		String[] rows = input.split("\n");
+		int[][] resultArray = new int[rows[0].length()][rows.length];
+		
+		for(int i = 0; i < rows[0].length(); i++) {
+			for(int j = 0; j < rows.length; j++) {
+				int index = map.get(rows[j].charAt(i));				
+				
+				resultArray[i][j] = rows[j].charAt(i);
+			}
+		}
+		
+		return resultArray;
+	}
+}

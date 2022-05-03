@@ -1,0 +1,24 @@
+package alg;
+
+import java.awt.Point;
+
+public class Bounty {
+	public int value;
+	public Bounty next;
+	public Point offset;
+	
+	public Bounty(int value, Bounty next, Point offset) {
+		this.value = value;
+		this.next = next;
+		this.offset = offset;
+	}
+	
+	public static Bounty GetStarter(int[][] pattern, int empty) {
+		Point last = new Point(0, 0);
+		for(int i = 0; i < pattern.length; i++) {
+			for(int j = 0; j < pattern[i].length; j++) {
+				
+			}
+		}
+	}
+}

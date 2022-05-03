@@ -1,0 +1,7 @@
+package alg;
+
+public class BountyAlgorithm {
+	private class Bounty() {
+		
+	}
+}

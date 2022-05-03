@@ -1,0 +1,18 @@
+package alg;
+
+import java.util.ArrayList;
+
+public class BountyAlgorithm {
+	private Bounty[] startingBounties;
+	private int[][] inputGrid;
+	private ArrayList<Bounty>[][][] bountyGrid;
+	private int tileCount;
+	
+	private void setNextBounty(int x, int y, int bounty) {
+		ArrayList<Bounty>[] targetBounties = bountyGrid[x][y];
+		
+		if(targetBounties == null) {
+			bountyGrid[x][y] = new ArrayList<Bounty>[tileCount]();
+		}
+	}
+}

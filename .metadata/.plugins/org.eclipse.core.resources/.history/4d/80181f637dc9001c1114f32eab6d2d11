@@ -1,0 +1,6 @@
+package alg;
+
+public class Bounty {
+	public int value;
+	public Bounty next;
+}
