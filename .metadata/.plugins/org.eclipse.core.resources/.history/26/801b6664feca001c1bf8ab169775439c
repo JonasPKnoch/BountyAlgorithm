@@ -1,0 +1,20 @@
+package alg;
+
+public class ArrayGrid<T> {
+	private T[][] array;
+	private int xSize;
+	private int ySize;
+	
+	ArrayGrid(int xSize, int ySize) {
+		this.xSize = xSize;
+		this.ySize = ySize;
+	}
+	
+	public int xSize() {
+		return xSize;
+	}
+	
+	public int ySize() {
+		return ySize;
+	}
+}

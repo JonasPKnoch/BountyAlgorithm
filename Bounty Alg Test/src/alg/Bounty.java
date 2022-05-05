@@ -4,37 +4,62 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 public class Bounty {
-	public int value;
-	public int index;
-	public Bounty next;
-	public Point offset;
+	private int value;
+	private int index;
+	private Bounty next;
+	private Point offset;
 	
-	public Bounty(int value, int index) {
+	private Bounty(int value, int index) {
 		this.value = value;
 		this.index = index;
 	}
 	
-	public static Bounty getStarter(int[][] pattern, int empty) {
+	public int value() {
+		return value;
+	}
+	
+	public int index() {
+		return index;
+	}
+	
+	public Bounty getNext() {
+		return next;
+	}
+	
+	public boolean hasNext() {
+		return next != null;
+	}
+	
+	public int offsetX() {
+		return offset.x;
+	}
+	
+	public int offsetY() {
+		return offset.y;
+	}
+	
+	public static Bounty getStarter(ArrayGrid<Integer> pattern, int empty) {
 		Bounty starter = null;
 		Point lastTile = null;
 		Bounty last = null;
 		int index = 0;
 		
-		for(int i = 0; i < pattern[i].length; i++) {
-			for(int j = 0; j < pattern.length; j++) {
-				int current = pattern[j][i];
+		for(int y = 0; y < pattern.ySize(); y++) {
+			for(int x = 0; x < pattern.xSize(); x++) {
+				int current = pattern.get(x, y);
 				
 				if(current != empty) {
 					if(last == null) {
 						last = new Bounty(current, index++);
 						starter = last;
-						lastTile = new Point(j, i);
+						lastTile = new Point(x, y);
 						continue;
 					}
 					
 					Bounty next = new Bounty(current, index++);
 					last.next = next;
-					last.offset = new Point(j - lastTile.x, i - lastTile.y);
+					last.offset = new Point(x - lastTile.x, y - lastTile.y);
+					lastTile = new Point(x, y);
 					last = next;
 				}
 			}
@@ -43,33 +68,20 @@ public class Bounty {
 		return starter;
 	}
 	
-	public static Bounty[][] getStarters(int[][][] patterns, int empty, int tiles) {
-		ArrayList<Bounty>[] starters = new ArrayList[tiles];
+	public static BountyLookup getStarters(Iterable<ArrayGrid<Integer>> patterns, int empty, int tiles) {
+		BountyLookup starters = new BountyLookup(tiles);
 		
-		for(int i = 0; i < starters.length; i++) {
-			starters[i] = new ArrayList<Bounty>();
-		}
-		
-		for(int[][] pattern : patterns) {
+		for(ArrayGrid<Integer> pattern : patterns) {
 			Bounty bounty = getStarter(pattern, empty);
-			starters[bounty.value].add(bounty);
+			starters.addBounty(bounty);
 		}
 		
-		Bounty[][] arr = new Bounty[tiles][];
-		
-		for(int i = 0; i < starters.length; i++) {
-			ArrayList<Bounty> el = starters[i];
-			arr[i] = new Bounty[el.size()];
-			
-			for(int j = 0; j < el.size(); j ++) {
-				arr[i][j] = el.get(j);
-			}
-		}
-		
-		return arr;
+		return starters;
 	}
 	
-	public static Bounty[][] getStarters(int[][] pattern, int empty, int tiles) {
-		return getStarters(new int[][][] {pattern}, empty, tiles);
+	public static BountyLookup getStarters(ArrayGrid<Integer> pattern, int empty, int tiles) {
+		ArrayList<ArrayGrid<Integer>> arr = new ArrayList<>();
+		arr.add(pattern);
+		return getStarters(arr, empty, tiles);
 	}
 }

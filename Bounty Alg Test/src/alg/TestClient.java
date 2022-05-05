@@ -1,39 +1,59 @@
 package alg;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TestClient {
 	static HashMap<Character, Integer> toMap;
 	static HashMap<Integer, Character> fromMap;
 	
+	static String blankGrid =
+			  "         " + "\n"
+			+ "         " + "\n"
+			+ "         " + "\n"
+			+ "         " + "\n"
+			+ "         ";
 	static String testGrid =
-			  "   #x#   " + "\n"
-			+ "   #x#   " + "\n"
-			+ "####x####" + "\n"
-			+ "xxxxxxxxx" + "\n"
-			+ "#########";
+			  "   xxx   " + "\n"
+			+ "    x    " + "\n"
+			+ "         " + "\n"
+			+ "    xxx  " + "\n"
+			+ "     x   ";
+	
 	static String testPattern =
-			  "#x#";
+			  "xxx" + "\n"
+			+ " x ";
 
 	public static void main(String[] args) {
 		generateMaps(" x#");
 		
-		int[][] grid = buildArray(testGrid);
-		Bounty[][] starters = Bounty.getStarters(buildArray(testPattern), 0, toMap.size()) ;
+		/*
+		ArrayGrid<Integer> grid = buildGrid(blankGrid);
+		Bounty starter = Bounty.getStarter(buildGrid(testPattern), 0);
 		
-		BountyAlgorithm alg = new BountyAlgorithm(starters, grid, toMap.size());
+		imprintPattern(starter, grid, 2, 2);
+		displayGrid(grid);
+		*/
+		
+		ArrayGrid<Integer> grid = buildGrid(testGrid);
+		ArrayList<ArrayGrid<Integer>> patterns = new ArrayList<>();
+		patterns.add(buildGrid(testPattern));
+		
+		BountyAlgorithm alg = new BountyAlgorithm(patterns, toMap.size());
+		
+		alg.run(grid);
 	}
 	
-	public static void displayArr(int[][] arr) {
+	public static void displayGrid(ArrayGrid<Integer> grid) {
 		StringBuilder sb = new StringBuilder();
 		
 		System.out.println();
-		for(int i = 0; i < arr[0].length; i++) {
-			sb.setLength(0);
-			for(int j = 0; j < arr.length; j++) {
-				sb.append(fromMap.get(arr[j][i]));
+		for(int y = 0; y < grid.ySize(); y++) {
+			for(int x = 0; x < grid.xSize(); x++) {
+				sb.append(grid.get(x, y));
 			}
 			System.out.println(sb.toString());
+			sb.setLength(0);
 		}
 	}
 	
@@ -50,17 +70,35 @@ public class TestClient {
 		}
 	}
 	
-	public static int[][] buildArray(String input) {
+	public static ArrayGrid<Integer> buildGrid(String input) {
 		String[] rows = input.split("\n");
-		int[][] resultArray = new int[rows[0].length()][rows.length];
+		ArrayGrid<Integer> resultGrid = new ArrayGrid<Integer>(rows[0].length(), rows.length);
 		
-		for(int i = 0; i < rows[0].length(); i++) {
-			for(int j = 0; j < rows.length; j++) {			
+		for(int x = 0; x < rows[0].length(); x++) {
+			for(int y = 0; y < rows.length; y++) {			
 				
-				resultArray[i][j] = toMap.get(rows[j].charAt(i));
+				resultGrid.set(x, y, toMap.get(rows[y].charAt(x)));
 			}
 		}
 		
-		return resultArray;
+		return resultGrid;
+	}
+	
+	public static void imprintPattern(Bounty starter, ArrayGrid<Integer> grid, int x, int y) {
+		int cX = x;
+		int cY = y;
+		Bounty current = starter;
+		
+		while(true) {
+			grid.set(cX, cY, current.value());
+			
+			if(current.getNext() != null) {
+				cX += current.offsetX();
+				cY += current.offsetY();
+				current = current.getNext();
+			} else {
+				break;
+			}
+		}
 	}
 }

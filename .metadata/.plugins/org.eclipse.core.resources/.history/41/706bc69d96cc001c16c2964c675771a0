@@ -1,0 +1,61 @@
+package alg;
+
+import java.util.ArrayList;
+import java.util.function.Supplier;
+
+public class BountyAlgorithm {
+	private Supplier<BountyLookup> newLookup;
+	
+	private Bounty[][] startingBounties;
+	private ArrayGrid<Integer> inputGrid;
+	private int tileCount;
+	private int xSize;
+	private int ySize;
+	
+	private ArrayGrid<BountyLookup> bountyGrid;
+	
+	public BountyAlgorithm(Bounty[][] startingBounties, ArrayGrid<Integer> inputGrid, int tileCount) {
+		newLookup = () -> new BountyLookup(tileCount);
+		
+		run(startingBounties, inputGrid, tileCount);
+	}
+	
+	private void addNextBounty(Bounty bounty, int x, int y) {		
+		if(!bounty.hasNext()) {
+			System.out.println("Matched at " + x + ", " + y);
+			return;
+		}
+		
+		Bounty nextBounty = bounty.getNext();
+		
+		int indexX = x + bounty.offsetX();
+		int indexY = y + bounty.offsetY();
+		
+		if(!bountyGrid.inBounds(indexX, indexY))
+			return;
+		
+		bountyGrid.getSet(indexX, indexY, newLookup).addBounty(nextBounty);;
+	}
+	
+	private Iterable<Bounty> bountyMatch(int currentCell, int x, int y) {		
+		return bountyGrid.getSet(x,  y, newLookup).matches(currentCell);
+	}
+	
+	public void run(Bounty[][] startingBounties, ArrayGrid<Integer> inputGrid, int tileCount) {
+		this.startingBounties = startingBounties;
+		this.inputGrid = inputGrid;
+		this.tileCount = tileCount;
+		xSize = inputGrid.xSize();
+		ySize = inputGrid.ySize();
+		
+		bountyGrid = new ArrayGrid<>(xSize, ySize);
+		
+		for(int y = 0; y < ySize; y++) {
+			for(int x = 0; x < xSize; x++) {
+				int currentCell = inputGrid.get(x, y);
+				for(Bounty el : bountyMatch(currentCell, x, y))
+					addNextBounty(el, x, y);
+			}
+		}
+	}
+}

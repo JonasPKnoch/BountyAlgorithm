@@ -1,0 +1,22 @@
+package alg;
+
+import java.util.ArrayList;
+
+public class BountyLookup {
+	private ArrayList<Bounty>[] lookup;
+	
+	public BountyLookup(int tileCount) {
+		lookup = new ArrayList[tileCount];
+	}
+	
+	public void addBounty(Bounty bounty) {
+		ArrayList<Bounty> target = lookup[bounty.value()];
+		
+		if(target == null) {
+			target = new ArrayList<Bounty>();
+			lookup[bounty.value()] = target;
+		}
+		
+		target.add(bounty);
+	}
+}
