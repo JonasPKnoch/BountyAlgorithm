@@ -38,7 +38,7 @@ public class BountyAlgorithm {
 	
 	public void run(ArrayGrid<Integer> inputGrid) {
 		bountyGrid = new ArrayGrid<>(inputGrid.xSize(), inputGrid.ySize());
-		
+		//test
 		for(int y = 0; y < inputGrid.ySize(); y++) {
 			for(int x = 0; x < inputGrid.xSize(); x++) {
 				int currentCell = inputGrid.get(x, y);
