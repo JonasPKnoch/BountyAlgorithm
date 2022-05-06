@@ -32,29 +32,53 @@ public class TestClient {
 			  " x " + "\n"
 			+ "xxx" + "\n"
 			+ " x ";
+	
+	static String testPatternHuge =
+			  " # xxx    xxx  xxxxx" + "\n"
+			+ " #  x      x   #    " + "\n"
+			+ " #  xxxxxxxx  ###   " + "\n"
+			+ " #   x####  x  #    " + "\n"
+			+ " #   x   #  x  #    " + "\n"
+			+ " #   x   #  x  #    " + "\n"
+			+ " #   x   ###########" + "\n"
+			+ " ####x   #     #xxxx" + "\n"
+			+ " #   x   #    ###   " + "\n"
+			+ " #   x   ###### #   " + "\n"
+			+ " #   x        # #   " + "\n"
+			+ " #   x        # #   ";
 
 	public static void main(String[] args) {
 		generateMaps(" x#");
 		
 		ArrayList<ArrayGrid<Integer>> patterns = new ArrayList<>();
-		for(int i = 0; i < 99; i += 3) {
-			patterns.add(buildGrid(testPatternT));
-			patterns.add(buildGrid(testPatternL));
-			patterns.add(buildGrid(testPatternCross));
-		}
+		patterns.add(buildGrid(testPatternHuge));
+		patterns.add(buildGrid(testPatternHuge));
+		patterns.add(buildGrid(testPatternHuge));
+		patterns.add(buildGrid(testPatternHuge));
+		patterns.add(buildGrid(testPatternHuge));
+		patterns.add(buildGrid(testPatternT));
+		patterns.add(buildGrid(testPatternL));
+		patterns.add(buildGrid(testPatternCross));
 		System.out.println("Matching " + patterns.size() + " patterns");
 		
 		ArrayGrid<Integer> grid = generateGrid(1000, 1500, 0);
 		populateGrid(grid, 1, 300000);
 		populateGrid(grid, 2, 10000);
+		imprintGrid(buildGrid(testPatternHuge), grid, 300, 400);
+		
 		
 		BountyAlgorithm alg = new BountyAlgorithm(patterns, toMap.size());
+		PrintListner listner = new PrintListner();
 		
 		long startTime = System.nanoTime();
-		alg.run(grid, new PrintListner());
+		alg.run(grid, listner);
 		long endTime = System.nanoTime();
 		
 		System.out.println("Finished in " + (endTime-startTime)/1000000000.0d + "s");
+		
+		for(Integer key : listner.matches.keySet()) {
+			System.out.println("Pattern #" + key + " matched " + listner.matches.get(key) + " times");
+		}
 	}
 	
 	public static void displayGrid(ArrayGrid<Integer> grid) {
@@ -111,6 +135,14 @@ public class TestClient {
 				current = current.getNext();
 			} else {
 				break;
+			}
+		}
+	}
+	
+	public static void imprintGrid(ArrayGrid<Integer> imprint, ArrayGrid<Integer> grid, int placeX, int placeY) {
+		for(int x = 0; x < imprint.xSize(); x++) {
+			for(int y = 0; y < imprint.ySize(); y++) {
+				grid.set(placeX + x, placeY + y, imprint.get(x, y));
 			}
 		}
 	}
