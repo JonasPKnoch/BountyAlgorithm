@@ -1,6 +1,5 @@
 package alg;
 
-import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
 public class ArrayGrid<T> {
@@ -45,7 +44,6 @@ public class ArrayGrid<T> {
 	}
 	
 	public boolean inBounds(int x, int y) {
-		
 		return !(0 > x || x >= xSize ||
 			   0 > y || y >= ySize);
 	}

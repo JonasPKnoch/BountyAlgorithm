@@ -1,6 +1,5 @@
 package alg;
 
-import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class BountyAlgorithm {
@@ -8,6 +7,7 @@ public class BountyAlgorithm {
 	private BountyLookup startingBounties;
 	
 	private ArrayGrid<BountyLookup> bountyGrid;
+	private BountyListner listner;
 	
 	public BountyAlgorithm(Iterable<ArrayGrid<Integer>> patterns, int tileCount) {		
 		startingBounties = Bounty.getStarters(patterns, 0, tileCount);
@@ -17,7 +17,7 @@ public class BountyAlgorithm {
 	
 	private void addNextBounty(Bounty bounty, int x, int y) {		
 		if(!bounty.hasNext()) {
-			System.out.println("Matched at " + x + ", " + y);
+			listner.foundPattern(bounty.patternID(), x, y);
 			return;
 		}
 		
@@ -32,18 +32,20 @@ public class BountyAlgorithm {
 		bountyGrid.getSet(indexX, indexY, newLookup).addBounty(nextBounty);;
 	}
 	
-	private Iterable<Bounty> bountyMatch(int currentCell, int x, int y) {	
+	private Iterable<Bounty> bountyMatch(int currentCell, int x, int y) {
 		return bountyGrid.getSet(x,  y, newLookup).matches(currentCell);
 	}
 	
-	public void run(ArrayGrid<Integer> inputGrid) {
+	public void run(ArrayGrid<Integer> inputGrid, BountyListner listner) {
 		bountyGrid = new ArrayGrid<>(inputGrid.xSize(), inputGrid.ySize());
-		//test
+		this.listner = listner;
+
 		for(int y = 0; y < inputGrid.ySize(); y++) {
 			for(int x = 0; x < inputGrid.xSize(); x++) {
-				int currentCell = inputGrid.get(x, y);
-				for(Bounty el : bountyMatch(currentCell, x, y))
+
+				for(Bounty el : bountyMatch(inputGrid.get(x, y), x, y))
 					addNextBounty(el, x, y);
+				
 			}
 		}
 	}

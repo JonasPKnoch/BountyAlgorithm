@@ -6,12 +6,15 @@ import java.util.ArrayList;
 public class Bounty {
 	private int value;
 	private int index;
+	private int patternID;
 	private Bounty next;
-	private Point offset;
+	private int x;
+	private int y;
 	
-	private Bounty(int value, int index) {
+	private Bounty(int value, int index, int patternID) {
 		this.value = value;
 		this.index = index;
+		this.patternID = patternID;
 	}
 	
 	public int value() {
@@ -20,6 +23,11 @@ public class Bounty {
 	
 	public int index() {
 		return index;
+	}
+	
+	
+	public int patternID() {
+		return patternID;
 	}
 	
 	public Bounty getNext() {
@@ -31,14 +39,14 @@ public class Bounty {
 	}
 	
 	public int offsetX() {
-		return offset.x;
+		return x;
 	}
 	
 	public int offsetY() {
-		return offset.y;
+		return y;
 	}
 	
-	public static Bounty getStarter(ArrayGrid<Integer> pattern, int empty) {
+	public static Bounty getStarter(ArrayGrid<Integer> pattern, int empty, int patternID) {
 		Bounty starter = null;
 		Point lastTile = null;
 		Bounty last = null;
@@ -50,15 +58,16 @@ public class Bounty {
 				
 				if(current != empty) {
 					if(last == null) {
-						last = new Bounty(current, index++);
+						last = new Bounty(current, index++, patternID);
 						starter = last;
 						lastTile = new Point(x, y);
 						continue;
 					}
 					
-					Bounty next = new Bounty(current, index++);
+					Bounty next = new Bounty(current, index++, patternID);
 					last.next = next;
-					last.offset = new Point(x - lastTile.x, y - lastTile.y);
+					last.x = x - lastTile.x;
+					last.y=  y - lastTile.y;
 					lastTile = new Point(x, y);
 					last = next;
 				}
@@ -71,8 +80,9 @@ public class Bounty {
 	public static BountyLookup getStarters(Iterable<ArrayGrid<Integer>> patterns, int empty, int tiles) {
 		BountyLookup starters = new BountyLookup(tiles);
 		
+		int id = 1;
 		for(ArrayGrid<Integer> pattern : patterns) {
-			Bounty bounty = getStarter(pattern, empty);
+			Bounty bounty = getStarter(pattern, empty, id++);
 			starters.addBounty(bounty);
 		}
 		
